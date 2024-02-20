@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Challenge2
 //
-//  Created by Victor Rubenko on 28.01.2024.
+//  Created by Victor  on 28.01.2024.
 //
 
 import SwiftUI
@@ -48,6 +48,10 @@ struct ContentView: View {
     @State private var counter = 0
     @State private var isCorrectAnswerShown = false
     @State private var givenAnswer = ""
+    @State private var rotateAmount = 0.0
+    @State private var opacity = 1.0
+    @State private var choosenFlag = -1
+    @State private var scaleValue = 1.0
     
     var body: some View {
         ZStack {
@@ -96,10 +100,23 @@ struct ContentView: View {
                                     
                                     FlagButton(action: {
                                         tapFlag(number)
+                                        choosenFlag = number
+                                        withAnimation(.spring(duration: 1.0)) {
+                                            rotateAmount = 360
+                                            opacity = 0.25
+                                            scaleValue = 2
+                                        }
+                                        scaleValue = 1
+                                        opacity = 1.0
+                                        rotateAmount = 0
                                     }, country: countries[number])
+                                    .rotation3DEffect(
+                                        .degrees(number == choosenFlag ? rotateAmount : 0),
+                                        axis: (x: 1, y: 0, z:0)
+                                    )
+                                    .scaleEffect(number != choosenFlag ? scaleValue : 1)
                                 }
                             }
-                            .animation(.easeInOut)
                             Text(result)
                                 .foregroundStyle(.white)
                                 .bold()
