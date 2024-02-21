@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Challenge6
 //
-//  Created by Victor Rubenko on 21.02.2024.
+//  Created by Victor on 21.02.2024.
 //
 
 import SwiftUI
