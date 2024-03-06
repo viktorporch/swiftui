@@ -13,40 +13,38 @@ struct ListLayout: View {
     @State var astronauts: [String: AstrounautEntity]
     
     var body: some View {
-            ScrollView {
-                LazyVStack {
-                    ForEach(missions) {
-                        mission in
-                        
-                        NavigationLink(
-                            destination: {
-                                MissionView(mission: mission, astronauts: astronauts)
-                            },
-                            label: {
-                                HStack {
-                                    Image(mission.image)
-                                        .resizable()
-                                        .scaledToFit()
-                                    VStack {
-                                        Text(mission.name)
-                                            .font(.headline)
-                                        Text(mission.date)
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .foregroundStyle(.white)
+        ScrollView {
+            LazyVStack {
+                ForEach(missions) {
+                    mission in
+                    
+                    NavigationLink(
+                        value: missions.firstIndex(where: { $0.id == mission.id} )!,
+                        label: {
+                            HStack {
+                                Image(mission.image)
+                                    .resizable()
+                                    .scaledToFit()
+                                VStack {
+                                    Text(mission.name)
+                                        .font(.headline)
+                                    Text(mission.date)
                                 }
-                                .frame(
-                                    height: 100
-                                )
-                                .padding()
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(.lightBackground)
-                                )
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(.white)
                             }
-                        )
-                    }
+                            .frame(
+                                height: 100
+                            )
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(.lightBackground)
+                            )
+                        }
+                    )
                 }
+            }
             .background(.darkBackground)
         }
     }

@@ -23,39 +23,31 @@ struct GridLayout: View {
                 ForEach(missions) {
                     mission in
                     
-                    NavigationLink(
-                        destination: {
-                            MissionView(
-                                mission: mission,
-                                astronauts: astronauts
-                            )
-                        },
-                        label: {
+                    NavigationLink(value: missions.firstIndex(where: { mission.id == $0.id} )!, label: {
+                        VStack {
+                            Image(mission.image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                                .padding(1)
                             VStack {
-                                Image(mission.image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .padding(1)
-                                VStack {
-                                    Text(mission.name)
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                    Text(mission.date)
-                                        .font(.caption)
-                                        .foregroundStyle(.white.opacity(0.5))
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical)
-                                .background(.blue)
+                                Text(mission.name)
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                Text(mission.date)
+                                    .font(.caption)
+                                    .foregroundStyle(.white.opacity(0.5))
                             }
-                            .clipShape(.rect(cornerRadius: 10))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.lightBackground)
-                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical)
+                            .background(.blue)
                         }
-                    )
+                        .clipShape(.rect(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(.lightBackground)
+                        )
+                    })
                 }
             }
             .background(.darkBackground)

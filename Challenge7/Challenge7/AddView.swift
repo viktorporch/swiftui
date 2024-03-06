@@ -20,6 +20,7 @@ struct AddView: View {
     @State private var amount = 0.0
     @Environment(\.dismiss) private var dismiss
     @State private var alertData = AlertData()
+    @State private var navTitle = "Expense Name"
     
     var expenses: Expenses
     
@@ -27,7 +28,7 @@ struct AddView: View {
         NavigationStack {
             VStack {
                 Form {
-                    TextField("Name", text: $name)
+//                    TextField("Name", text: $name)
                     
                     Picker(
                         "Type",
@@ -51,7 +52,13 @@ struct AddView: View {
                     addExepnseItem()
                 }
             }
-            .navigationTitle("Add new expense")
+            .toolbar {
+                Button("Cancel") {
+                    dismiss()
+                }
+            }
+            .navigationTitle($navTitle)
+            .navigationBarTitleDisplayMode(.inline)
             .alert(
                 alertData.title,
                 isPresented: $alertData.isAlertShowing,
@@ -66,7 +73,7 @@ struct AddView: View {
     }
     
     private func addExepnseItem() {
-        guard name.count > 0,
+        guard navTitle.count > 0,
               amount > 0 else {
             alertData = .init(
                 title: "Oops..",
@@ -77,7 +84,7 @@ struct AddView: View {
         }
         expenses.items.append(
             .init(
-                name: name,
+                name: navTitle,
                 type: type,
                 amount: amount
             )

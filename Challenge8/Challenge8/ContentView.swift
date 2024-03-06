@@ -22,6 +22,10 @@ struct ContentView: View {
                     ListLayout(missions: missions, astronauts: astronauts)
                 }
             }
+            .navigationDestination(for: Int.self) { selection in
+                
+                MissionView(mission: missions[selection], astronauts: astronauts)
+            }
             .navigationTitle("Moonshot")
             .toolbar {
                 Button("List/Grid") {

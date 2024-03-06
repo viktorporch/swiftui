@@ -77,16 +77,18 @@ struct ContentView: View {
             }
             .navigationTitle("iExpense")
             .toolbar {
-                Button("Add Expense", systemImage: "plus") {
-                    showingAddExpense = true
-                }
+                NavigationLink(
+                    destination: {
+                        AddView(expenses: expenses)
+                            .navigationBarBackButtonHidden()
+                    },
+                    label: {
+                        HStack {
+                            Text("Add Expense")
+                        }
+                    }
+                )
             }
-            .sheet(
-                isPresented: $showingAddExpense,
-                content: {
-                    AddView(expenses: expenses)
-                }
-            )
         }
     }
     

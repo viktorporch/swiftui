@@ -13,45 +13,43 @@ struct MissionView: View {
     let astronauts: [String: AstrounautEntity]
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack {
-                    Image(mission.image)
-                        .resizable()
-                        .scaledToFit()
-                        .containerRelativeFrame(.horizontal) {
-                            length, axis in
-                            
-                            return length * 0.5
-                        }
-                        .padding(.top)
-                    Text("Launch Date: \(mission.date)")
-                        .font(.title)
-                    Text("Mission Highlights")
-                        .font(.title)
-                        .foregroundStyle(.white)
-                        .padding(.bottom)
-                    Text(mission.description)
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    VStack(alignment: .leading) {
-                        Text("Crew")
-                            .foregroundStyle(.white)
-                            .padding(.top)
-                            .bold()
-                        MissionScrollView(
-                            crew: mission.crew,
-                            astronauts: astronauts
-                        )
+        ScrollView {
+            VStack {
+                Image(mission.image)
+                    .resizable()
+                    .scaledToFit()
+                    .containerRelativeFrame(.horizontal) {
+                        length, axis in
+                        
+                        return length * 0.5
                     }
+                    .padding(.top)
+                Text("Launch Date: \(mission.date)")
+                    .font(.title)
+                Text("Mission Highlights")
+                    .font(.title)
+                    .foregroundStyle(.white)
+                    .padding(.bottom)
+                Text(mission.description)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                VStack(alignment: .leading) {
+                    Text("Crew")
+                        .foregroundStyle(.white)
+                        .padding(.top)
+                        .bold()
+                    MissionScrollView(
+                        crew: mission.crew,
+                        astronauts: astronauts
+                    )
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.all)
             }
-            .navigationTitle(mission.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .background(.darkBackground)
+            .frame(maxWidth: .infinity)
+            .padding(.all)
         }
+        .navigationTitle(mission.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(.darkBackground)
     }
 }
 
