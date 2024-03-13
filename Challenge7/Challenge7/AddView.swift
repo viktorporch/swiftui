@@ -21,8 +21,7 @@ struct AddView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var alertData = AlertData()
     @State private var navTitle = "Expense Name"
-    
-    var expenses: Expenses
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         NavigationStack {
@@ -82,8 +81,8 @@ struct AddView: View {
             )
             return
         }
-        expenses.items.append(
-            .init(
+        modelContext.insert(
+            ExpenseItem(
                 name: navTitle,
                 type: type,
                 amount: amount
@@ -98,5 +97,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(expenses: .init())
+    AddView()
 }

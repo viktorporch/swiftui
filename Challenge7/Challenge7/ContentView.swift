@@ -6,80 +6,29 @@
 //
 
 import SwiftUI
-
-struct ExpenseItem: Identifiable, Codable {
-    
-    enum ExpenseType: String, CaseIterable, Codable {
-        case personal
-        case business
-    }
-    
-    var id = UUID()
-    let name: String
-    let type: ExpenseType
-    let amount: Double
-}
-
-@Observable
-class Expenses {
-    var items = [ExpenseItem]() {
-        didSet {
-            if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.setValue(encoded, forKey: "items")
-            }
-        }
-    }
-    
-    init() {
-        if let data = UserDefaults.standard.data(forKey: "items"),
-           let decoded = try? JSONDecoder().decode([ExpenseItem].self, from: data) {
-            items = decoded
-        } else {
-            items = []
-        }
-    }
-}
+import SwiftData
 
 struct ContentView: View {
     
-    @State private var expenses = Expenses()
     @State private var showingAddExpense = false
+    @Environment(\.modelContext) private var modelContext
+    @State private var sortOrder = [
+        SortDescriptor(\ExpenseItem.name),
+        SortDescriptor(\ExpenseItem.amount)
+    ]
+    @State private var filterTypes: [ExpenseItem.ExpenseType] = [.business, .personal]
     
     var body: some View {
         NavigationStack {
-            VStack {
-                List {
-                    ForEach(ExpenseItem.ExpenseType.allCases, id: \.self) {
-                        itemType in
-                        
-                        Section(itemType.rawValue.capitalized) {
-                            ForEach(expenses.items.filter { $0.type == itemType }) {
-                                item in
-                                
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text(item.name)
-                                            .font(.headline)
-                                        Text(item.type.rawValue.capitalized)
-                                    }
-                                    Spacer()
-                                    Text(
-                                        item.amount,
-                                        format: .currency(code: .localCurrencyCode)
-                                    )
-                                    .foregroundStyle(item.amount > 10 ? .red : .black)
-                                }
-                            }
-                            .onDelete(perform: removeItems)
-                        }
-                    }
-                }
-            }
+            SortedExpensesList(
+                types: filterTypes.map { $0.rawValue },
+                sortOrder: sortOrder
+            )
             .navigationTitle("iExpense")
             .toolbar {
                 NavigationLink(
                     destination: {
-                        AddView(expenses: expenses)
+                        AddView()
                             .navigationBarBackButtonHidden()
                     },
                     label: {
@@ -88,17 +37,54 @@ struct ContentView: View {
                         }
                     }
                 )
+                Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                    Menu("Type") {
+                        Picker("Sort", selection: $filterTypes) {
+                            Text("All")
+                                .tag([
+                                    ExpenseItem.ExpenseType.business,
+                                    ExpenseItem.ExpenseType.personal
+                                ])
+                            Text("Business")
+                                .tag([ExpenseItem.ExpenseType.business])
+                            
+                            Text("Personal")
+                                .tag([ExpenseItem.ExpenseType.personal])
+                        }
+                    }
+                    
+                    Menu("Properties") {
+                        Picker("Sort", selection: $sortOrder) {
+                            Text("Sort by Name")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.name),
+                                    SortDescriptor(\ExpenseItem.amount)
+                                ])
+                            
+                            Text("Sort by Amount")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.amount),
+                                    SortDescriptor(\ExpenseItem.name),
+                                ])
+                        }
+                    }
+                }
             }
         }
-    }
-    
-    private func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
     }
 }
 
 #Preview {
-    ContentView()
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: ExpenseItem.self, configurations: config)
+        let item1 = ExpenseItem(name: "1", type: .business, amount: 123)
+        let item2 = ExpenseItem(name: "2", type: .business, amount: 124)
+        return ContentView()
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create container: \(error.localizedDescription)")
+    }
 }
 
 extension String {
